@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokedex JS</title>
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1 class="app__title">Pokedex JS</h1>
+
+        <form id="searchForm" class="controls" aria-label="Search Controls">
+          <input id="pokemonInput" class="controls__input" type="text" placeholder="Search Pokemon (min. 3 letters)" autocomplete="off"/>
+          <button id="searchButton" class="controls__button" type="submit" disabled>Search</button>
+        </form>
+      </header>
+
+      <section id="status" class="status" aria-live="polite">
+
+      </section>
+
+      <section id="pokemonGrid" class="grid" aria-label="Pokemon list">
+
+      </section>
+
+      <footer class="footer">
+        <button id="loadMoreButton" class="controls__button" type="button">Load More</button>
+      </footer>
+
+    </main>
+
+    <script src="./app.js"></script>
+
+  </body>
+</html>
