@@ -94,3 +94,88 @@ body {
   text-transform: capitalize;
 }
 
+.card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.card__id {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.card__img {
+  width: 56px;
+  height: 56px;
+  image-rendering: pixelated;
+}
+
+.card__name {
+  margin-top: 6px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+}
+
+.overlay__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+}
+
+.overlay__panel {
+  position: relative;
+  width: min(520px, 92vw);
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(15, 15, 22, 0.95);
+}
+
+.overlay__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  border-radius: 10px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.hidden {
+  display: none;
+}
+
+.overlayCard__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.overlayCard__name {
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.overlayCard__meta {
+  margin-top: 6px;
+  opacity: 0.85;
+}
+
+.overlayCard__img {
+  width: 96px;
+  height: 96px;
+  image-rendering: pixelated;
+}
+

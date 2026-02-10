@@ -14,26 +14,51 @@
         <h1 class="app__title">Pokedex JS</h1>
 
         <form id="searchForm" class="controls" aria-label="Search Controls">
-          <input id="pokemonInput" class="controls__input" type="text" placeholder="Search Pokemon (min. 3 letters)" autocomplete="off"/>
-          <button id="searchButton" class="controls__button" type="submit" disabled>Search</button>
+          <input
+            id="pokemonInput"
+            class="controls__input"
+            type="text"
+            placeholder="Search Pokemon (min. 3 letters)"
+            autocomplete="off"
+          />
+          <button
+            id="searchButton"
+            class="controls__button"
+            type="submit"
+            disabled
+          >
+            Search
+          </button>
         </form>
       </header>
 
-      <section id="status" class="status" aria-live="polite">
+      <section id="status" class="status" aria-live="polite"></section>
 
-      </section>
-
-      <section id="pokemonGrid" class="grid" aria-label="Pokemon list">
-
-      </section>
+      <section
+        id="pokemonGrid"
+        class="grid"
+        aria-label="Pokemon list"
+      ></section>
 
       <footer class="footer">
-        <button id="loadMoreButton" class="controls__button" type="button">Load More</button>
+        <button id="loadMoreButton" class="controls__button" type="button">
+          Load More
+        </button>
       </footer>
-
     </main>
 
-    <script src="./app.js"></script>
+    <!-- Overlay -->
+    <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+        <div class="overlay__backdrop" data-close="true"></div>
 
+        <div class="overlay__panel" role="document">
+            <button id="overlayClose" class="overlay__close" type="button" aria-label="Close">
+                x
+            </button>
+            <div id="overlayContent" class="overlay__content"></div>
+        </div>
+    </div>
+
+    <script src="./app.js"></script>
   </body>
 </html>
