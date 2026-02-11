@@ -1,5 +1,3 @@
-# pokedex-js
-
 # Pokédex JS
 
 A simple Pokédex web application built with **Vanilla JavaScript** using the [PokéAPI](https://pokeapi.co/).
