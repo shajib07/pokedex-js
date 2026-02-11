@@ -16,7 +16,7 @@ let offset = 0;
 const limit = 20;
 let isLoading = false;
 let currentOverlayPokemonID = 0;
-
+const allLoadedPokemon = [];
 const detailsCache = new Map();
 
 function setStatus(message = "") {
@@ -26,7 +26,13 @@ function setStatus(message = "") {
 function updateSearchState() {
   const value = pokemonInput.value.trim();
   searchButton.disabled = value.length < 3;
-  if (value.length == 0) setStatus("");
+
+  if (value.length == 0) {
+    setStatus("");
+    gridEl.innerHTML = "";
+    loadMoreButton.style.display = "";
+    if (allLoadedPokemon.length > 0) renderCards(allLoadedPokemon);
+  }
 }
 
 function getQuery() {
@@ -35,13 +41,27 @@ function getQuery() {
 
 function onSearchSubmit(event) {
   event.preventDefault();
-  const q = getQuery();
-  if (q.length < 3) {
+
+  const query = getQuery();
+  if (query.length < 3) {
     setStatus("Type at least 3 letters to initate search!");
     return;
   }
 
-  setStatus(`Searching later: ${q}`);
+  gridEl.innerHTML = "";
+  loadMoreButton.style.display = "none";
+
+  const searchResults = allLoadedPokemon.filter((pokemon) =>
+    pokemon.name.includes(query),
+  );
+
+  if (searchResults.length === 0) {
+    setStatus("No pokemon found!");
+    return;
+  }
+
+  setStatus(`Search result for: ${query}`);
+  renderCards(searchResults);
 }
 
 async function fetchPokemonDetails(id) {
@@ -70,6 +90,8 @@ function formatId(id) {
 }
 
 function renderCards(items) {
+  if (items.length === 0) return;
+
   console.log("render == ", items);
   const html = items
     .map((p) => {
@@ -100,7 +122,7 @@ async function fetchPokemonList() {
   return data;
 }
 
-async function loadnextBatch() {
+async function loadNextBatch() {
   if (isLoading) return;
   isLoading = true;
   loadMoreButton.disabled = true;
@@ -108,6 +130,7 @@ async function loadnextBatch() {
 
   try {
     const data = await fetchPokemonList();
+    allLoadedPokemon.push(...data.results);
     renderCards(data.results);
     offset += limit;
     console.log(" my limit == ", offset, limit);
@@ -136,7 +159,7 @@ async function onGridClick(event) {
 async function showCardDetails() {
   console.log("showCardDEtails == ", currentOverlayPokemonID);
   overlayPrevBtn.disabled = currentOverlayPokemonID <= 1;
-  overlayNextBtn.disabled = currentOverlayPokemonID >= offset;
+  overlayNextBtn.disabled = currentOverlayPokemonID >= allLoadedPokemon.length;
 
   try {
     const details = await fetchPokemonDetails(currentOverlayPokemonID);
@@ -180,7 +203,7 @@ function buildOverlayHtml(details, id) {
 
 pokemonInput.addEventListener("input", updateSearchState);
 searchForm.addEventListener("submit", onSearchSubmit);
-loadMoreButton.addEventListener("click", loadnextBatch);
+loadMoreButton.addEventListener("click", loadNextBatch);
 gridEl.addEventListener("click", onGridClick);
 overlayCloseBtn.addEventListener("click", closeOverlay);
 overlayEl.addEventListener("click", (event) => {
@@ -202,4 +225,4 @@ overlayPrevBtn.addEventListener("click", () => {
 });
 
 updateSearchState();
-loadnextBatch();
+loadNextBatch();
