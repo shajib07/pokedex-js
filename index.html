@@ -49,14 +49,36 @@
 
     <!-- Overlay -->
     <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
-        <div class="overlay__backdrop" data-close="true"></div>
+      <div class="overlay__backdrop" data-close="true"></div>
 
-        <div class="overlay__panel" role="document">
-            <button id="overlayClose" class="overlay__close" type="button" aria-label="Close">
-                x
-            </button>
-            <div id="overlayContent" class="overlay__content"></div>
-        </div>
+      <div class="overlay__panel" role="document">
+        <button
+          id="overlayClose"
+          class="overlay__close"
+          type="button"
+          aria-label="Close"
+        >
+          x
+        </button>
+        <button
+          id="overlayPrev"
+          class="overlay__nav overlay__nav--prev"
+          type="button"
+          aria-label="Previous"
+        >
+          ◀
+        </button>
+        <button
+          id="overlayNext"
+          class="overlay__nav overlay__nav--next"
+          type="button"
+          aria-label="Next"
+        >
+          ▶
+        </button>
+
+        <div id="overlayContent" class="overlay__content"></div>
+      </div>
     </div>
 
     <script src="./app.js"></script>

@@ -179,3 +179,22 @@ body {
   image-rendering: pixelated;
 }
 
+.overlay__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid rgba(255,255,255,0.14);
+  background: rgba(255,255,255,0.08);
+  color: inherit;
+  border-radius: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.overlay__nav--prev { left: -44px; }
+.overlay__nav--next { right: -44px; }
+
+.overlay__nav:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

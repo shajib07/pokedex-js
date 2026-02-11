@@ -1,7 +1,6 @@
 const pokemonInput = document.getElementById("pokemonInput");
 const searchButton = document.getElementById("searchButton");
 const searchForm = document.getElementById("searchForm");
-
 const statusEl = document.getElementById("status");
 const gridEl = document.getElementById("pokemonGrid");
 const loadMoreButton = document.getElementById("loadMoreButton");
@@ -10,9 +9,13 @@ const overlayEl = document.getElementById("overlay");
 const overlayCloseBtn = document.getElementById("overlayClose");
 const overlayContentEl = document.getElementById("overlayContent");
 
+const overlayPrevBtn = document.getElementById("overlayPrev");
+const overlayNextBtn = document.getElementById("overlayNext");
+
 let offset = 0;
 const limit = 20;
 let isLoading = false;
+let currentOverlayPokemonID = 0;
 
 const detailsCache = new Map();
 
@@ -49,6 +52,7 @@ async function fetchPokemonDetails(id) {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
   const data = await res.json();
+  console.log("details == ", data);
   detailsCache.set(id, data);
   return data;
 }
@@ -106,6 +110,7 @@ async function loadnextBatch() {
     const data = await fetchPokemonList();
     renderCards(data.results);
     offset += limit;
+    console.log(" my limit == ", offset, limit);
     setStatus("");
     console.log(data);
   } catch (err) {
@@ -124,10 +129,18 @@ async function onGridClick(event) {
   if (!id) return;
 
   setStatus("Loading details...");
+  currentOverlayPokemonID = Number(id);
+  showCardDetails();
+}
+
+async function showCardDetails() {
+  console.log("showCardDEtails == ", currentOverlayPokemonID);
+  overlayPrevBtn.disabled = currentOverlayPokemonID <= 1;
+  overlayNextBtn.disabled = currentOverlayPokemonID >= offset;
 
   try {
-    const details = await fetchPokemonDetails(id);
-    openOverlay(buildOverlayHtml(details, id));
+    const details = await fetchPokemonDetails(currentOverlayPokemonID);
+    openOverlay(buildOverlayHtml(details, currentOverlayPokemonID));
     setStatus("");
   } catch (err) {
     setStatus("Failed to load details. Please try again!");
@@ -158,7 +171,7 @@ function buildOverlayHtml(details, id) {
                 <div class="overlayCard__name">${name}</div>
                 <div class="overlayCard__meta">${formatId(id)} . ${types}</div>
             </div>
-            ${img ? `<img class="overlayCard__img" src="${img}" alt=""${name}" />` : ""}
+            ${img ? `<img class="overlayCard__img" src="${img}" alt="${name}" />` : ""}
         </div>
         <div class="overlayCard__meta">Height: ${details.height} . Weight: ${details.weight}</div>
     </div>
@@ -177,6 +190,15 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !overlayEl.classList.contains("hidden")) {
     closeOverlay();
   }
+});
+
+overlayNextBtn.addEventListener("click", () => {
+  currentOverlayPokemonID += 1;
+  showCardDetails();
+});
+overlayPrevBtn.addEventListener("click", () => {
+  currentOverlayPokemonID -= 1;
+  showCardDetails();
 });
 
 updateSearchState();
