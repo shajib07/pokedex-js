@@ -12,6 +12,9 @@ const overlayContentEl = document.getElementById("overlayContent");
 const overlayPrevBtn = document.getElementById("overlayPrev");
 const overlayNextBtn = document.getElementById("overlayNext");
 
+const overlayCardTemplate = document.getElementById("overlayCardTemplate");
+const cardTemplate = document.getElementById("cardTemplate");
+
 let offset = 0;
 const limit = 20;
 let isLoading = false;
@@ -75,7 +78,6 @@ async function fetchPokemonDetails(id) {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
   const data = await res.json();
-  console.log("details == ", data);
   detailsCache.set(id, data);
   return data;
 }
@@ -91,8 +93,6 @@ function getIdFromPokemonUrl(url) {
 function formatId(id) {
   return `#${String(id).padStart(3, "0")}`;
 }
-
-const cardTemplate = document.getElementById("cardTemplate");
 
 function createCard(pokemon) {
   const id = getIdFromPokemonUrl(pokemon.url);
@@ -170,7 +170,8 @@ async function showCardDetails() {
   const id = Number(getIdFromPokemonUrl(pokemon.url));
 
   overlayPrevBtn.disabled = currentOverlayIndex <= 0;
-  overlayNextBtn.disabled = currentOverlayIndex >= currentDisplayList.length - 1;
+  overlayNextBtn.disabled =
+    currentOverlayIndex >= currentDisplayList.length - 1;
 
   try {
     const details = await fetchPokemonDetails(id);
@@ -193,8 +194,6 @@ function closeOverlay() {
   overlayContentEl.innerHTML = "";
   document.body.style.overflow = "";
 }
-
-const overlayCardTemplate = document.getElementById("overlayCardTemplate");
 
 function buildOverlayContent(details, id) {
   const clone = overlayCardTemplate.content.cloneNode(true);
