@@ -92,27 +92,26 @@ function formatId(id) {
   return `#${String(id).padStart(3, "0")}`;
 }
 
+const cardTemplate = document.getElementById("cardTemplate");
+
+function createCard(pokemon) {
+  const id = getIdFromPokemonUrl(pokemon.url);
+  const clone = cardTemplate.content.cloneNode(true);
+  const card = clone.querySelector(".card");
+  card.dataset.id = id;
+  clone.querySelector(".card__id").textContent = formatId(id);
+  const img = clone.querySelector(".card__img");
+  img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
+  img.alt = pokemon.name;
+  clone.querySelector(".card__name").textContent = pokemon.name;
+  return clone;
+}
+
 function renderCards(items) {
   if (items.length === 0) return;
-
-  console.log("render == ", items);
-  const html = items
-    .map((p) => {
-      const id = getIdFromPokemonUrl(p.url);
-      const imgUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${id}.png`;
-      return `
-      <article class="card" data-id="${id}">
-        <div class="card__top">
-          <span class="card__id">${formatId(id)}</span>
-          <img class="card__img" src="${imgUrl}" alt="${p.name}" loading="lazy" />
-        </div>
-        <div class="card__name">${p.name}</div>
-      </article>
-      `;
-    })
-    .join("");
-
-  gridEl.insertAdjacentHTML("beforeend", html);
+  const fragment = document.createDocumentFragment();
+  items.forEach((p) => fragment.appendChild(createCard(p)));
+  gridEl.appendChild(fragment);
 }
 
 async function fetchPokemonList() {
@@ -175,15 +174,16 @@ async function showCardDetails() {
 
   try {
     const details = await fetchPokemonDetails(id);
-    openOverlay(buildOverlayHtml(details, id));
+    openOverlay(buildOverlayContent(details, id));
     setStatus("");
   } catch (err) {
     setStatus("Failed to load details. Please try again!");
   }
 }
 
-function openOverlay(html) {
-  overlayContentEl.innerHTML = html;
+function openOverlay(content) {
+  overlayContentEl.innerHTML = "";
+  overlayContentEl.appendChild(content);
   overlayEl.classList.remove("hidden");
   document.body.style.overflow = "hidden";
 }
@@ -194,23 +194,28 @@ function closeOverlay() {
   document.body.style.overflow = "";
 }
 
-function buildOverlayHtml(details, id) {
-  const types = formatTypes(details.types);
-  const img = details.sprites?.front_default || "";
-  const name = details.name;
+const overlayCardTemplate = document.getElementById("overlayCardTemplate");
 
-  return `
-    <div class="overlayCard">
-        <div class="overlayCard__top">
-            <div>
-                <div class="overlayCard__name">${name}</div>
-                <div class="overlayCard__meta">${formatId(id)} . ${types}</div>
-            </div>
-            ${img ? `<img class="overlayCard__img" src="${img}" alt="${name}" />` : ""}
-        </div>
-        <div class="overlayCard__meta">Height: ${details.height} . Weight: ${details.weight}</div>
-    </div>
-    `;
+function buildOverlayContent(details, id) {
+  const clone = overlayCardTemplate.content.cloneNode(true);
+  const name = details.name;
+  const img = details.sprites?.front_default || "";
+
+  clone.querySelector(".overlayCard__name").textContent = name;
+  clone.querySelector(".overlayCard__info").textContent =
+    `${formatId(id)} . ${formatTypes(details.types)}`;
+  clone.querySelector(".overlayCard__stats").textContent =
+    `Height: ${details.height} . Weight: ${details.weight}`;
+
+  const imgEl = clone.querySelector(".overlayCard__img");
+  if (img) {
+    imgEl.src = img;
+    imgEl.alt = name;
+  } else {
+    imgEl.remove();
+  }
+
+  return clone;
 }
 
 pokemonInput.addEventListener("input", updateSearchState);

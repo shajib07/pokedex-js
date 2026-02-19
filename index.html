@@ -81,6 +81,29 @@
       </div>
     </div>
 
+    <template id="cardTemplate">
+      <article class="card">
+        <div class="card__top">
+          <span class="card__id"></span>
+          <img class="card__img" loading="lazy" />
+        </div>
+        <div class="card__name"></div>
+      </article>
+    </template>
+
+    <template id="overlayCardTemplate">
+      <div class="overlayCard">
+        <div class="overlayCard__top">
+          <div>
+            <div class="overlayCard__name"></div>
+            <div class="overlayCard__meta overlayCard__info"></div>
+          </div>
+          <img class="overlayCard__img" />
+        </div>
+        <div class="overlayCard__meta overlayCard__stats"></div>
+      </div>
+    </template>
+
     <script src="./app.js"></script>
   </body>
 </html>
