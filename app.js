@@ -15,7 +15,8 @@ const overlayNextBtn = document.getElementById("overlayNext");
 let offset = 0;
 const limit = 20;
 let isLoading = false;
-let currentOverlayPokemonID = 0;
+let currentOverlayIndex = -1;
+let currentDisplayList = [];
 const allLoadedPokemon = [];
 const detailsCache = new Map();
 
@@ -31,6 +32,7 @@ function updateSearchState() {
     setStatus("");
     gridEl.innerHTML = "";
     loadMoreButton.style.display = "";
+    currentDisplayList = allLoadedPokemon;
     if (allLoadedPokemon.length > 0) renderCards(allLoadedPokemon);
   }
 }
@@ -60,6 +62,7 @@ function onSearchSubmit(event) {
     return;
   }
 
+  currentDisplayList = searchResults;
   setStatus(`Search result for: ${query}`);
   renderCards(searchResults);
 }
@@ -131,11 +134,17 @@ async function loadNextBatch() {
   try {
     const data = await fetchPokemonList();
     allLoadedPokemon.push(...data.results);
+    currentDisplayList = allLoadedPokemon;
     renderCards(data.results);
     offset += limit;
-    console.log(" my limit == ", offset, limit);
+
+    const detailPromises = data.results.map((p) => {
+      const id = Number(getIdFromPokemonUrl(p.url));
+      return fetchPokemonDetails(id).catch(() => null);
+    });
+    await Promise.all(detailPromises);
+
     setStatus("");
-    console.log(data);
   } catch (err) {
     setStatus("Failed to load Pokemon. Please try again!");
   } finally {
@@ -151,19 +160,22 @@ async function onGridClick(event) {
   const id = card.dataset.id;
   if (!id) return;
 
-  setStatus("Loading details...");
-  currentOverlayPokemonID = Number(id);
+  currentOverlayIndex = currentDisplayList.findIndex(
+    (p) => getIdFromPokemonUrl(p.url) === id,
+  );
   showCardDetails();
 }
 
 async function showCardDetails() {
-  console.log("showCardDEtails == ", currentOverlayPokemonID);
-  overlayPrevBtn.disabled = currentOverlayPokemonID <= 1;
-  overlayNextBtn.disabled = currentOverlayPokemonID >= allLoadedPokemon.length;
+  const pokemon = currentDisplayList[currentOverlayIndex];
+  const id = Number(getIdFromPokemonUrl(pokemon.url));
+
+  overlayPrevBtn.disabled = currentOverlayIndex <= 0;
+  overlayNextBtn.disabled = currentOverlayIndex >= currentDisplayList.length - 1;
 
   try {
-    const details = await fetchPokemonDetails(currentOverlayPokemonID);
-    openOverlay(buildOverlayHtml(details, currentOverlayPokemonID));
+    const details = await fetchPokemonDetails(id);
+    openOverlay(buildOverlayHtml(details, id));
     setStatus("");
   } catch (err) {
     setStatus("Failed to load details. Please try again!");
@@ -216,11 +228,11 @@ document.addEventListener("keydown", (event) => {
 });
 
 overlayNextBtn.addEventListener("click", () => {
-  currentOverlayPokemonID += 1;
+  currentOverlayIndex += 1;
   showCardDetails();
 });
 overlayPrevBtn.addEventListener("click", () => {
-  currentOverlayPokemonID -= 1;
+  currentOverlayIndex -= 1;
   showCardDetails();
 });
 
