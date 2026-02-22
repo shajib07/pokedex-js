@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pokedex JS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
     <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="./style.css" />
   </head>
@@ -11,7 +12,10 @@
   <body>
     <main class="app">
       <header class="header">
-        <h1 class="app__title">Pokedex JS</h1>
+        <div class="app__brand">
+          <img class="app__logo" src="./favicon.svg" alt="Pokedex logo" />
+          <h1 class="app__title">Pokedex JS</h1>
+        </div>
 
         <form id="searchForm" class="controls" aria-label="Search Controls">
           <input
@@ -46,6 +50,10 @@
         </button>
       </footer>
     </main>
+
+    <div id="spinner" class="loader hidden" aria-label="Loading">
+      <div class="loader__bar"></div>
+    </div>
 
     <!-- Overlay -->
     <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
@@ -88,19 +96,29 @@
           <img class="card__img" loading="lazy" />
         </div>
         <div class="card__name"></div>
+        <div class="card__types"></div>
       </article>
     </template>
 
     <template id="overlayCardTemplate">
       <div class="overlayCard">
-        <div class="overlayCard__top">
-          <div>
-            <div class="overlayCard__name"></div>
-            <div class="overlayCard__meta overlayCard__info"></div>
-          </div>
+        <div class="overlayCard__header">
           <img class="overlayCard__img" />
+          <div class="overlayCard__name"></div>
+          <div class="overlayCard__info"></div>
         </div>
-        <div class="overlayCard__meta overlayCard__stats"></div>
+        <div class="overlayCard__tabs">
+          <button class="tab tab--active" data-tab="about" type="button">About</button>
+          <button class="tab" data-tab="stats" type="button">Base Stats</button>
+          <button class="tab" data-tab="moves" type="button">Moves</button>
+          <button class="tab" data-tab="evolution" type="button">Evolution</button>
+        </div>
+        <div class="overlayCard__body">
+          <div class="tabPanel" data-panel="about"></div>
+          <div class="tabPanel hidden" data-panel="stats"></div>
+          <div class="tabPanel hidden" data-panel="moves"></div>
+          <div class="tabPanel hidden" data-panel="evolution"></div>
+        </div>
       </div>
     </template>
 

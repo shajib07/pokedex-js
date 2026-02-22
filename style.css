@@ -5,8 +5,8 @@
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  background: #0b0b10;
-  color: #f4f4f8;
+  background: linear-gradient(135deg, #0b1026, #1b1440 45%, #2a0f3f);
+  color: #eaeaef;
 }
 
 .app {
@@ -22,16 +22,29 @@ body {
   gap: 16px;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  margin: -16px -16px 16px;
-  background: rgba(11, 11, 16, 0.85);
-  backdrop-filter: blur(8px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 18px 20px;
+  margin: -16px -16px 20px;
+
+  border-bottom: 1px solid rgba(246, 242, 242, 0.3); /* subtle divider */
+}
+
+.app__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app__logo {
+  width: 28px;
+  height: 28px;
 }
 
 .app__title {
-  margin: 0;
-  font-size: 20px;
+  font-family: 'Luckiest Guy', cursive;
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+  color: #ffeb3b;
+  text-shadow: 3px 3px 0 #1a237e;
 }
 
 .controls {
@@ -69,6 +82,30 @@ body {
   opacity: 0.9;
 }
 
+.loader {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.loader__bar {
+  width: 40%;
+  height: 100%;
+  background: #ffeb3b;
+  border-radius: 0 2px 2px 0;
+  animation: slide 1.2s ease-in-out infinite;
+}
+
+@keyframes slide {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(350%); }
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -85,8 +122,20 @@ body {
 .card {
   padding: 14px;
   border-radius: 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:active {
+  transform: scale(0.97);
+}
+
+.card:hover {
+  transform: scale(1.04);
+  border-color: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 .card__name {
@@ -116,35 +165,54 @@ body {
   margin-top: 6px;
 }
 
+.card__types {
+  margin-top: 4px;
+  opacity: 0.7;
+  text-transform: capitalize;
+}
+
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 50;
   display: grid;
   place-items: center;
+  overflow: hidden;
 }
 
 .overlay__backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
 }
 
 .overlay__panel {
   position: relative;
   width: min(520px, 92vw);
+  max-height: 90vh;
+  overflow: hidden;
   border-radius: 16px;
-  padding: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(15, 15, 22, 0.95);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #16213e;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+}
+
+.overlay__content {
+  flex: 1;
+  overflow-y: auto;
 }
 
 .overlay__close {
   position: absolute;
   top: 10px;
   right: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.08);
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.3);
   color: inherit;
   border-radius: 10px;
   padding: 6px 10px;
@@ -155,46 +223,199 @@ body {
   display: none;
 }
 
-.overlayCard__top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-}
-
-.overlayCard__name {
-  font-size: 18px;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-.overlayCard__meta {
-  margin-top: 6px;
-  opacity: 0.85;
+.overlayCard__header {
+  text-align: center;
+  padding: 20px 18px 14px;
+  border-radius: 16px 16px 0 0;
 }
 
 .overlayCard__img {
-  width: 96px;
-  height: 96px;
+  width: 120px;
+  height: 120px;
   image-rendering: pixelated;
+}
+
+.overlayCard__name {
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: capitalize;
+  margin-top: 4px;
+}
+
+.overlayCard__info {
+  margin-top: 4px;
+  opacity: 0.9;
+  text-transform: capitalize;
+}
+
+.overlayCard__tabs {
+  display: flex;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0 18px;
+}
+
+.tab {
+  flex: 1;
+  padding: 10px 4px;
+  border: none;
+  background: none;
+  color: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  font-size: 16px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.tab--active {
+  color: #f4f4f8;
+  border-bottom-color: var(--type-color, #e53935);
+}
+
+.overlayCard__body {
+  padding: 14px 18px 18px;
+  height: 280px;
+  overflow-y: auto;
+}
+
+.aboutRow {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.aboutRow__label {
+  width: 100px;
+  flex-shrink: 0;
+  opacity: 0.6;
+  text-transform: capitalize;
+}
+
+.aboutRow__value {
+  flex: 1;
+  text-transform: capitalize;
+}
+
+.moveTag {
+  display: inline-block;
+  padding: 4px 10px;
+  margin: 3px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.08);
+  text-transform: capitalize;
+}
+
+.evoChain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 0;
+}
+
+.evoStage {
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.evoStage__img {
+  width: 72px;
+  height: 72px;
+  image-rendering: pixelated;
+}
+
+.evoArrow {
+  opacity: 0.5;
+  font-size: 20px;
 }
 
 .overlay__nav {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  border: 1px solid rgba(255,255,255,0.14);
-  background: rgba(255,255,255,0.08);
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.4);
   color: inherit;
   border-radius: 12px;
-  padding: 8px 12px;
+  padding: 8px 14px;
   cursor: pointer;
 }
 
-.overlay__nav--prev { left: -44px; }
-.overlay__nav--next { right: -44px; }
+.overlay__nav--prev { left: 10px; }
+.overlay__nav--next { right: 10px; }
 
 .overlay__nav:disabled {
   opacity: 0.4;
   cursor: not-allowed;
+}
+
+.overlayCard__statBars {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.statBar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statBar__label {
+  width: 110px;
+  flex-shrink: 0;
+  text-transform: capitalize;
+  opacity: 0.85;
+}
+
+.statBar__track {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.statBar__fill {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--type-color, #e53935);
+  transition: width 0.3s ease;
+}
+
+.statBar__value {
+  width: 32px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .header {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .controls {
+    width: 100%;
+  }
+
+  .controls__input {
+    flex: 1;
+    width: auto;
+    min-width: 0;
+  }
+
+  .overlay__nav--prev { left: 4px; }
+  .overlay__nav--next { right: 4px; }
+
+  .statBar__label {
+    width: 80px;
+  }
+
+  .tab {
+    font-size: 14px;
+    padding: 8px 2px;
+  }
 }
